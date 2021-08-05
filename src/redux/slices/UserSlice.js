@@ -1,13 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { setKeyInStorage } from "../../helpers/ManageStore";
 
-const urlApiBase = 'http://gateway.marvel.com/';
+//----------------------------------------------------------------const urlApiBussinesBase = 'http://gateway.marvel.com/';
+const urlApiAthenticate = process.env.REACT_APP_USERS_API;
 
 const loginUser = createAsyncThunk(
   'users/login',
   async ({ email, password }, thunkAPI) => {
     try {
       const response = await fetch(
-        'https://reqres.in/api/login',
+        `${urlApiAthenticate}login`,
         {
           method: 'POST',
           headers: {
@@ -24,10 +26,10 @@ const loginUser = createAsyncThunk(
       let data = await response.json();
 
       if (response.status === 200) {
-        localStorage.setItem('token', data.token);
+        setKeyInStorage('token', data.accessToken);
         return data;
       } else {
-        return thunkAPI.rejectWithValue(data.error);
+        return thunkAPI.rejectWithValue(data.message);
       }
 
     } catch (error) {
@@ -60,7 +62,7 @@ const signupUser = createAsyncThunk(
       const data = await response.json();
 
       if (response.status === 200) {
-        localStorage.setItem('token', data.token);
+        setKeyInStorage('token', data.accessToken);
         return { ...data, username: name, email };
       } else {
         return thunkAPI.rejectWithValue(data);

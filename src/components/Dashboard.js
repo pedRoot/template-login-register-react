@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
 
 import { clearState, fetchUserBytoken, userSelector } from '../redux/slices/UserSlice';
+import { getKeyInStorage, removeKeyInStorage } from '../helpers/ManageStore';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -11,7 +12,7 @@ const Dashboard = () => {
   const {isError, isFetching} = useSelector(userSelector);
 
   useEffect(() => {
-    dispatch(fetchUserBytoken({token: localStorage.getItem('token')}));
+    dispatch(fetchUserBytoken({token: getKeyInStorage('token')}));
   }, [dispatch]);
 
   const {username, email, avatar} = useSelector(userSelector);
@@ -24,7 +25,7 @@ const Dashboard = () => {
   }, [dispatch, history, isError]);
 
   const onLogOut = () => {
-    localStorage.removeItem('token');
+    removeKeyInStorage('token');
     history.push('/login');
   }
 

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const jsonServer = require('json-server');
 const jwt = require('jsonwebtoken')
@@ -6,6 +7,10 @@ const jwt = require('jsonwebtoken')
 const server = jsonServer.create();
 const router = jsonServer.router('./database.json');
 const userDB = JSON.parse(fs.readFileSync('./users.json', 'UTF-8'));
+
+server.use(cors({
+  origin: '*'
+}));
 
 server.use(bodyParser.urlencoded({
   extended: true
@@ -20,7 +25,7 @@ const createToken = payload => {
 }
 
 const isAuthenticated = ({ email, password }) => {
-  return userDB.users.findIndex(user => user.email === email && user.password === password);
+  return userDB.users.findIndex(user => user.email === email && user.password === password) !== -1;
 }
 
 const verifyToken = token => {
@@ -70,7 +75,7 @@ server.post('/auth/register', (req, res) => {
 
 })
 
-server.post('auth/login', (req, res) => {
+server.post('/auth/login', (req, res) => {
   console.log('Login endpoint called; request body');
   console.log(req.body);
 
@@ -115,6 +120,14 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
     const message = 'Access Token is revoked';
     res.status(status).json({ status, message });
   }
+});
+
+server.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+  next();
 });
 
 server.use(router);

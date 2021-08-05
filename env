@@ -1,0 +1,6 @@
+# cypher
+# var salt = Crypto.lib.WordArray.random(128/8);
+# salt = salt.toString(Crypto.enc.Base64);
+REACT_APP_CYPHER_KEY="7aitIIcRwVWEG8jTS0BhBw=="
+REACT_APP_CYPHER_IV="mPKRdj2D/L66/W8b+TPkcQ=="
+REACT_APP_ENCRYPT_DATA="ON"
