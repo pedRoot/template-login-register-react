@@ -1,13 +1,28 @@
 {
   "users": [
-    { "id": 1, "email": "bruno@email.com", "password": "bruno" },
-    { "id": 2, "email": "marck@email.com", "password": "marck" },
-    { "id": 3, "email": "wilson@email.com", "password": "wilson" },
-    { "id": 4, "email": "wilson1@email.com", "password": "wilson" },
-    { "id": 5, "email": "wilson2@email.com", "password": "wilson" },
-    { "id": 6, "email": "wilson3@email.com", "password": "wilson" },
-    { "id": 7, "email": "wilson4@email.com", "password": "wilson" },
-    { "id": 8, "email": "wilson7@email.com", "password": "wilson" },
-    { "id": 9, "email": "wilson8@email.com", "password": "wilson" }
+    {
+      "id": 1,
+      "first_name": "Pedro",
+      "last_name": "Torres",
+      "email": "ptorres@email.com",
+      "gender": "Male",
+      "ip_address": "111.240.209.181",
+      "principalAddress": "78 Thackeray Terrace",
+      "phone": "175-760-1854",
+      "avatar": "https://robohash.org/officiautbeatae.png?size=250x250&set=set1",
+      "password": "ptorres"
+    },
+    {
+      "id": 2,
+      "first_name": "Marisel",
+      "last_name": "Bueno",
+      "email": "mbueno@email.com",
+      "gender": "Female",
+      "ip_address": "19.40.34.40",
+      "principalAddress": "35474 Harbort Park",
+      "phone": "695-587-2546",
+      "avatar": "https://robohash.org/voluptatemutexplicabo.png?size=250x250&set=set1",
+      "password": "mbueno"
+    }
   ]
 }

@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
 
-import { clearState, fetchUserBytoken, userSelector } from '../redux/slices/UserSlice';
-import { getKeyInStorage, removeKeyInStorage } from '../helpers/ManageStore';
+import { clearState, fetchUser, userSelector } from '../redux/slices/UserSlice';
+import { removeKeyInStorage } from '../helpers/ManageStore';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -12,7 +12,7 @@ const Dashboard = () => {
   const {isError, isFetching} = useSelector(userSelector);
 
   useEffect(() => {
-    dispatch(fetchUserBytoken({token: getKeyInStorage('token')}));
+    dispatch(fetchUser());
   }, [dispatch]);
 
   const {username, email, avatar} = useSelector(userSelector);

@@ -1,40 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setKeyInStorage } from "../../helpers/ManageStore";
-
-//----------------------------------------------------------------const urlApiBussinesBase = 'http://gateway.marvel.com/';
-const urlApiAthenticate = process.env.REACT_APP_USERS_API;
+import { AuthService } from "../../services/AuthService";
+import { UserService } from "../../services/UserService";
 
 const loginUser = createAsyncThunk(
   'users/login',
-  async ({ email, password }, thunkAPI) => {
+  async (data, thunkAPI) => {
     try {
-      const response = await fetch(
-        `${urlApiAthenticate}login`,
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email,
-            password
-          }),
-        }
-      );
+      const response = await AuthService.login(data);
+      const dataResponse = response.data.accessToken;
 
-      let data = await response.json();
+      setKeyInStorage('token', dataResponse);
 
-      if (response.status === 200) {
-        setKeyInStorage('token', data.accessToken);
-        return data;
-      } else {
-        return thunkAPI.rejectWithValue(data.message);
-      }
+      return dataResponse;
 
     } catch (error) {
-      console.log('error: ', error.response.data);
-      return thunkAPI.rejectWithValue(error.response.data);
+      console.log('error: ', error);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
@@ -75,31 +57,17 @@ const signupUser = createAsyncThunk(
   }
 );
 
-export const fetchUserBytoken = createAsyncThunk(
+export const fetchUser = createAsyncThunk(
   'users/fetchUserByToken',
-  async ({ token }, thunkAPI) => {
+  async (thunkAPI) => {
     try {
-      const response = await fetch(
-        'https://reqres.in/api/users/4',
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            Authorization: token,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      let data = await response.json();
+      const response = await UserService.getDetailUser();
+      
+      return response.data;
 
-      if (response.status === 200) {
-        return { ...data };
-      } else {
-        return thunkAPI.rejectWithValue(data);
-      }
-    } catch (e) {
-      console.log('Error', e.response.data);
-      return thunkAPI.rejectWithValue(e.response.data);
+    } catch (error) {
+      console.log('error: ', error);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
@@ -107,8 +75,6 @@ export const fetchUserBytoken = createAsyncThunk(
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: '',
-    email: '',
     isFetching: false,
     isSuccess: false,
     isError: false,
@@ -143,8 +109,6 @@ const userSlice = createSlice({
 
 
     [loginUser.fulfilled]: (state, { payload }) => {
-      state.email = payload.email;
-      state.username = payload.name;
       state.isFetching = false;
       state.isSuccess = true;
       return state;
@@ -159,18 +123,18 @@ const userSlice = createSlice({
     },
 
 
-    [fetchUserBytoken.pending]: (state) => {
+    [fetchUser.pending]: (state) => {
       state.isFetching = true;
     },
-    [fetchUserBytoken.fulfilled]: (state, { payload }) => {
+    [fetchUser.fulfilled]: (state, { payload }) => {
       state.isFetching = false;
       state.isSuccess = true;
 
-      state.avatar = payload.data.avatar;
-      state.email = payload.data.email;
-      state.username = `${payload.data.first_name} ${payload.data.last_name}`;
+      state.avatar = payload.avatar;
+      state.email = payload.email;
+      state.username = `${payload.first_name} ${payload.last_name}`;
     },
-    [fetchUserBytoken.rejected]: (state) => {
+    [fetchUser.rejected]: (state) => {
       state.isFetching = false;
       state.isError = true;
     },

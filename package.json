@@ -10,7 +10,10 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "autoprefixer": "^9.8.6",
+    "axios": "^0.21.1",
+    "axios-hooks": "^2.6.3",
     "crypto-js": "^4.1.1",
+    "lru-cache": "^6.0.0",
     "nodemon": "^2.0.7",
     "postcss": "^7.0.35",
     "react": "^17.0.1",
@@ -30,7 +33,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "start-server": "json-server --watch ./database.json",
+    "start-server": "json-server --watch ./database.json --port 8080",
     "start-auth": "node server.js"
   },
   "eslintConfig": {

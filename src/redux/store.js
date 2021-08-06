@@ -7,5 +7,5 @@ export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
   },
-  //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger).concat(thunk),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger).concat(thunk),
 });

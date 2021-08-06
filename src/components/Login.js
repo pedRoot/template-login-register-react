@@ -65,7 +65,7 @@ const Login = () => {
                     id="email"
                     name="email"
                     type="email"
-                    defaultValue="bruno@email.com"
+                    defaultValue="ptorres@email.com"
                     ref={register({
                       pattern: /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/i,
                     })}
@@ -88,7 +88,7 @@ const Login = () => {
                     name="password"
                     type="password"
                     ref={register({ required: true })}
-                    defaultValue="bruno"
+                    defaultValue="ptorres"
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
                 </div>

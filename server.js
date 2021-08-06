@@ -28,11 +28,22 @@ const isAuthenticated = ({ email, password }) => {
   return userDB.users.findIndex(user => user.email === email && user.password === password) !== -1;
 }
 
+const findUserByEmail = email => {
+  return userDB.users.find(user => user.email === email);
+}
+
+const readTokenInHeader = req => {
+  if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
+    return false;
+  }
+  return req.headers.authorization.split(' ')[1];
+}
+
 const verifyToken = token => {
   return jwt.verify(token, SECRET_KEY, (err, decode) => decode !== undefined ? decode : err)
 }
 
-server.post('/auth/register', (req, res) => {
+server.post('/v1/auth/register', (req, res) => {
   console.log('register endpoint calledl request body');
   console.log(req.body);
   const { email, password } = req.body;
@@ -75,25 +86,45 @@ server.post('/auth/register', (req, res) => {
 
 })
 
-server.post('/auth/login', (req, res) => {
+server.post('/v1/auth/login', (req, res) => {
   console.log('Login endpoint called; request body');
   console.log(req.body);
 
   const { email, password } = req.body;
-  if (!isAuthenticated({ email, password })) {
+  const user = findUserByEmail(email);
+
+  if (!user && user.password !== password) {
     const status = 401;
     const message = 'Credentials not valid';
     res.status(status).json({ status, message });
 
     return
   }
+  const accessToken = createToken({ email });
 
-  const accessToken = createToken({ email, password });
-  console.log('Access Token ', accessToken);
   res.status(200).json({ accessToken });
 });
 
-server.use(/^(?!\/auth).*$/, (req, res, next) => {
+server.get('/v1/users', (req, res) => {
+  console.log('Login endpoint called; request body');
+  const token = readTokenInHeader(req);
+
+  const payloadToken = jwt.decode(token);
+
+  if (!token || !payloadToken) {
+    const status = 401;
+    const message = 'Token required';
+    res.status(status).json({ status, message });
+
+    return
+  }
+
+  const detailUser = findUserByEmail(payloadToken.email);
+  res.status(200).json({...detailUser, password: 'xxxxx'});
+});
+
+
+server.use(/^(?!\/v1).*$/,  (req, res, next) => {
   if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
     const status = 401;
     const message = 'Error in authorizaion format';
@@ -122,13 +153,6 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
   }
 });
 
-server.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-  res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
-  next();
-});
 
 server.use(router);
 server.listen(8000, () => {
