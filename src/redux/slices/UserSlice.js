@@ -1,7 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { setKeyInStorage } from "../../helpers/ManageStore";
+import { clearStorage, setKeyInStorage } from "../../helpers/ManageStore";
 import { AuthService } from "../../services/AuthService";
 import { UserService } from "../../services/UserService";
+
+const closeSession = createAsyncThunk(
+  'user/closession',
+  async thunkAPI => {
+    try {
+      clearStorage();
+      return;
+    } catch (error) {
+      console.log('error: ', error);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 const loginUser = createAsyncThunk(
   'users/login',
@@ -62,7 +75,7 @@ export const fetchUser = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const response = await UserService.getDetailUser();
-      
+
       return response.data;
 
     } catch (error) {
@@ -92,11 +105,9 @@ const userSlice = createSlice({
   },
   extraReducers: {
 
-    [signupUser.fulfilled]: (state, { payload }) => {
+    [signupUser.fulfilled]: (state) => {
       state.isFetching = false;
       state.isSuccess = true;
-      state.email = payload.email;
-      state.username = payload.name;
     },
     [signupUser.pending]: state => {
       state.isFetching = true;
@@ -108,10 +119,9 @@ const userSlice = createSlice({
     },
 
 
-    [loginUser.fulfilled]: (state, { payload }) => {
+    [loginUser.fulfilled]: (state) => {
       state.isFetching = false;
       state.isSuccess = true;
-      return state;
     },
     [loginUser.rejected]: (state, { payload }) => {
       state.isFetching = false;
@@ -122,6 +132,21 @@ const userSlice = createSlice({
       state.isFetching = true;
     },
 
+
+    [closeSession.pending]: (state, { payload }) => {
+      state.isFetching = true;
+    },
+    [closeSession.fulfilled]: (state, { payload }) => {
+      state.isFetching = false;
+      state.isSuccess = false;
+      state.isError = false;
+    },
+    [closeSession.rejected]: (state, { payload }) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage = payload;
+    },
+    
 
     [fetchUser.pending]: (state) => {
       state.isFetching = true;
@@ -146,4 +171,4 @@ export const { clearState } = userSlice.actions;
 
 const userSelector = (state) => state.user;
 
-export { userSlice, userSelector, signupUser, loginUser };
+export { userSlice, userSelector, signupUser, loginUser, closeSession };

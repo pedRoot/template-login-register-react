@@ -36,7 +36,7 @@ const Login = () => {
       dispatch(clearState());
       history.push('/');
     }
-  }, [dispatch, errorMessage, history, isError, isSuccess]);
+  }, [isError, isSuccess]);
 
   return (
     <>

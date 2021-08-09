@@ -4,18 +4,18 @@ import { useHistory } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
 
 import { clearState, fetchUser, userSelector } from '../redux/slices/UserSlice';
-import { removeKeyInStorage } from '../helpers/ManageStore';
+import { clearStorage } from '../helpers/ManageStore';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const {isError, isFetching} = useSelector(userSelector);
+  const { isError, isFetching } = useSelector(userSelector)
 
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  const {username, email, avatar} = useSelector(userSelector);
+  const { username, email, avatar } = useSelector(userSelector);
 
   useEffect(() => {
     if (isError) {
@@ -25,7 +25,7 @@ const Dashboard = () => {
   }, [dispatch, history, isError]);
 
   const onLogOut = () => {
-    removeKeyInStorage('token');
+    clearStorage();
     history.push('/login');
   }
 
@@ -38,7 +38,7 @@ const Dashboard = () => {
           <div className="container mx-auto">
             <img src={avatar} alt="asdasd" />
             <p>Welcome back</p> <h3>{username}</h3>{email}
-            
+
           </div>
 
           <button

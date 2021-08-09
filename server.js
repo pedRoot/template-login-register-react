@@ -93,7 +93,7 @@ server.post('/v1/auth/login', (req, res) => {
   const { email, password } = req.body;
   const user = findUserByEmail(email);
 
-  if (!user && user.password !== password) {
+  if (!user || user.password !== password) {
     const status = 401;
     const message = 'Credentials not valid';
     res.status(status).json({ status, message });
@@ -101,7 +101,6 @@ server.post('/v1/auth/login', (req, res) => {
     return
   }
   const accessToken = createToken({ email });
-
   res.status(200).json({ accessToken });
 });
 
